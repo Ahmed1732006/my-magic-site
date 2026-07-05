@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأرشيف السري - قراءة الأفكار</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #050505;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* تأثيرات السحر والدخان بالخلفية */
+        .magic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #1a0b2e 0%, #050505 70%);
+            z-index: -2;
+        }
+
+        .smoke {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.3;
+            animation: moveSmoke 20s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes moveSmoke {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+
+        /* الشاشات */
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* النصوص العائمة */
+        .title {
+            font-size: 2.5rem;
+            color: #d4af37;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .mystic-text {
+            font-size: 1.2rem;
+            color: #b58ce8;
+            text-shadow: 0 0 10px rgba(181, 140, 232, 0.8);
+            margin: 15px 0;
+            min-height: 40px;
+        }
+
+        /* الأزرار */
+        .btn {
+            background: linear-gradient(45deg, #4b134f, #c94b4b);
+            border: 2px solid #d4af37;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+            box-shadow: 0 0 15px rgba(201, 75, 75, 0.4);
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.8);
+            background: linear-gradient(45deg, #c94b4b, #4b134f);
+        }
+
+        .btn-no {
+            background: linear-gradient(45deg, #1a2a6c, #11998e);
+            border-color: #4facfe;
+            box-shadow: 0 0 15px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-no:hover {
+            box-shadow: 0 0 25px rgba(79, 172, 254, 0.8);
+            background: linear-gradient(45deg, #11998e, #1a2a6c);
+        }
+
+        /* تصميم الكروت */
+        .cards-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        /* تنسيق خاص للـ 52 كارت في البداية لتناسب الشاشة */
+        .intro-grid {
+            max-height: 35vh;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            gap: 8px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+        
+        .intro-grid::-webkit-scrollbar { width: 8px; }
+        .intro-grid::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
+
+        .card {
+            width: 80px;
+            height: 115px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        /* حجم مصغر لكروت شاشة البداية */
+        .card.mini {
+            width: 50px;
+            height: 75px;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            border-radius: 8px;
+        }
+
+        .card:hover .card-inner {
+            transform: translateY(-10px) rotateY(10deg);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+        }
+
+        .card.mini:hover .card-inner {
+            transform: translateY(-5px) scale(1.1);
+        }
+
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: #fff;
+            border: 2px solid #eee;
+            flex-direction: column;
+        }
+
+        .card.mini .card-front { font-size: 1rem; }
+        .card.mini .mini-suit { font-size: 0.7rem; }
+
+        .card-front.red { color: #d32f2f; }
+        .card-front.black { color: #111; }
+
+        .card-back {
+            background: repeating-linear-gradient(45deg, #1a0b2e, #1a0b2e 10px, #4b134f 10px, #4b134f 20px);
+            border: 2px solid #fff;
+            transform: rotateY(180deg);
+        }
+
+        .mini-suit {
+            font-size: 1rem;
+            position: absolute;
+        }
+        .mini-suit.top { top: 5px; left: 5px; }
+        .mini-suit.bottom { bottom: 5px; right: 5px; transform: rotate(180deg); }
+
+        /* الشاشة النهائية (تم إضافة ألوان النص بشكل صريح هنا) */
+        .reveal-card-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 280px;
+        }
+
+        .reveal-card {
+            width: 180px;
+            height: 260px;
+            background: #fff;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 1);
+            animation: cinematicReveal 2s ease-out forwards;
+            opacity: 0;
+            transform: scale(0.1) translateY(100px);
+        }
+
+        /* تصحيح ألوان الكارت النهائي */
+        .reveal-card.red { color: #d32f2f; }
+        .reveal-card.black { color: #111; }
+
+        @keyframes cinematicReveal {
+            0% { opacity: 0; transform: scale(0.1) translateY(100px) rotate(180deg); }
+            50% { opacity: 1; transform: scale(1.2) translateY(-20px) rotate(-10deg); box-shadow: 0 0 100px #fff; }
+            100% { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); box-shadow: 0 0 50px rgba(212, 175, 55, 1); }
+        }
+
+        .reveal-card .mini-suit {
+            font-size: 1.8rem;
+            position: absolute;
+        }
+
+        /* تأثير اهتزاز الشاشة */
+        .shake {
+            animation: shakeScreen 0.5s;
+        }
+
+        @keyframes shakeScreen {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            100% { transform: translate(0px, 0px) rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="magic-bg"></div>
+    <div class="smoke"></div>
+
+    <!-- شاشة البداية (فيها الـ 52 ورقة) -->
+    <div id="intro-screen" class="screen active">
+        <h1 class="title">اختر بطاقه من 52 دور ف دماغك ☺ </h1>
+        <p class="subtitle">لازم تختار بطاقه قبل ما نبدا ☺</p>
+        
+        <!-- هنا يظهر الـ 52 كارت -->
+        <div class="cards-grid intro-grid" id="intro-cards"></div>
+        
+        <p class="mystic-text">ركز معايا كويس 👀<br>اختار ورقة واحدة بس في دماغك من غير ما تدوس عليها ومن غير ما تقولها لحد 🃏</p>
+        <button class="btn" onclick="startGame()">أنا اخترت... ابدأ 🔮</button>
+    </div>
+
+    <!-- شاشة اللعب والأسئلة -->
+    <div id="game-screen" class="screen">
+        <h2 class="title" style="font-size: 1.8rem;">مرحلة التحليل 👁️</h2>
+        <p class="mystic-text" id="analysis-text">بص كويس علي ورقتك موجودة وسط المجموعة دي ولا لا ركز كويس عشان اي اختار غلط هتخلي الناتج غلط؟</p>
+        <div class="cards-grid" id="question-cards"></div>
+        <div>
+            <button class="btn" onclick="answer(true)">آه موجودة 🃏</button>
+            <button class="btn btn-no" onclick="answer(false)">لا مش هنا ❌</button>
+        </div>
+    </div>
+
+
+    <!-- شاشة التفكير وقراءة العقل -->
+    <div id="thinking-screen" class="screen">
+        <div class="reveal-card-container">
+            <div class="card" style="width:120px; height:170px; animation: moveSmoke 2s infinite;">
+                <div class="card-back" style="width:100%; height:100%; position:relative; transform:none; border-radius:10px;"></div>
+            </div>
+        </div>
+        <h2 class="mystic-text shake" id="mind-reading-text" style="font-size: 2rem;">جاري الدخول لعقلك...</h2>
+    </div>
+
+    <!-- شاشة النتيجة -->
+    <div id="reveal-screen" class="screen">
+        <h1 class="title">مستحيل 😳</h1>
+        <p class="subtitle">أنا عرفت الورقة اللي كنت مخبيها...</p>
+        <div class="reveal-card-container" id="final-card-container">
+            <!-- سيتم إضافة الكارت هنا بالـ JS -->
+        </div>
+        <p class="mystic-text" id="final-card-name" style="margin-top: 20px; font-size: 1.5rem;"></p>
+        <button class="btn" onclick="location.reload()" style="margin-top: 15px;">جرب تتحداني تاني 😏</button>
+    </div>
+
+    <script>
+        // تعريف ورق الكوتشينة (52 ورقة)
+        const suits = ['❤️', '♦️', '♣️', '♠️'];
+        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        let deck = [];
+        let magicSets = [[], [], [], [], [], []]; // 6 مجموعات للخدعة السحرية
+        let currentStep = 0;
+        let chosenCardId = 0;
+
+        // توليد الكروت وتوزيعها على 6 مجموعات بناءً على الخدعة الثنائية
+        let idCounter = 1;
+        for (let s of suits) {
+            for (let v of values) {
+                let color = (s === '❤️' || s === '♦️') ? 'red' : 'black';
+                let card = { id: idCounter, suit: s, value: v, color: color };
+                deck.push(card);
+                
+                // توزيع الورقة على المجموعات باستخدام الـ Bits
+                for (let i = 0; i < 6; i++) {
+if (((idCounter) & (1 << i)) !== 0 && idCounter <= 52) {
+    magicSets[i].push(card);
+}
+                }
+                idCounter++;
+            }
+        }
+
+        // الجمل المصرية العشوائية للمرحلة الانتقالية
+        const transitionPhrases = [
+            "استنى... في حاجة غريبة بتحصل 🤔",
+            "حاسس إن اختيارك بدأ يظهر...",
+            "مش مستعجل... الورقة بتحاول تختفي 😂",
+            "تمام... شلت شوية احتمالات",
+            "هممم... بدأت أفهم تفكيرك",
+            "اختياراتك بتكشف السر واحدة واحدة",
+            "ركز معايا آخر شوية",
+            "عينك فضحاك على فكرة 😉",
+            "الطاقة في المكان بتتغير..."
+        ];
+
+        // الجمل المصرية لمرحلة قراءة الأفكار النهائية (أكثر من 30 جملة)
+        const thinkingPhrases = [
+            "استنى... أنا شايف حاجة 👁️", "الرؤية لسه مش واضحة أوي...", "حاسس إن اختيارك كان سريع...",
+            "هممم... لون الورقة دي بيلمع في دماغي", "شكلها ورقة حمرا... ولا أقولك...",
+            "لا لا ثانية... ممكن تكون سودا؟", "الرقم مش واضح... كأنه بيطير",
+            "يمكن رقم كبير...", "أو يمكن صورة؟", "لا... قربت أعرفها",
+            "الورقة دي مميزة... زيك كده", "مخك بيحاول يخبيها بس أنا وراه",
+            "طاقتك قوية جداً...", "شكلنا هنوصل للسر دلوقتي...", "انت متأكد إنك مختار ورقة واحدة؟ 🤔",
+            "خلاص... ملامح الكارت بدأت تظهر", "الرموز بتتجمع...", "قلب ولا سمبوسة؟ 😂",
+            "شجرة ولا بستوني؟", "استنى... أنا قفشت الفكرة", "بتفكر فيها كتير صح؟",
+            "الورقة بتنادي عليا...", "لحظة... في تداخل في الأفكار", "أيوة... هي دي!",
+            "كارت عنيد جداً...", "أنا بحلل كل إجاباتك...", "السحر بدأ يشتغل 🔮",
+            "عيني على الكارت بتاعك...", "الموضوع طلع أصعب مما أتخيل... بس هجيبها",
+            "ثواني... هانت", "خلاص الصورة ظهرت 😈"
+        ];
+
+        // رسم كارت (يمرر mini=true لتصغير الكروت في شاشة البداية)
+        function createCardHTML(card, mini = false) {
+            return `
+                <div class="card ${mini ? 'mini' : ''}">
+                    <div class="card-inner">
+                        <div class="card-front ${card.color}">
+                            <span class="mini-suit top">${card.suit}</span>
+                            <span>${card.value}</span>
+                            <span class="mini-suit bottom">${card.suit}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // عرض الـ 52 كارت في شاشة البداية
+        const introContainer = document.getElementById('intro-cards');
+        // يتم عرضها بالترتيب ليسهل على اللاعب اختيار ورقة معينة في عقله
+        introContainer.innerHTML = deck.map(c => createCardHTML(c, true)).join('');
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startGame() {
+            currentStep = 0;
+            chosenCardId = 0;
+            showQuestion();
+            switchScreen('game-screen');
+        }
+
+        function showQuestion() {
+            if (currentStep >= 6) {
+                startMindReading();
+                return;
+            }
+            
+            // خلط الكروت داخل المجموعة عشان ميبقاش الترتيب محفوظ ومكشوف
+            let currentSet = [...magicSets[currentStep]].sort(() => 0.5 - Math.random());
+            document.getElementById('question-cards').innerHTML = currentSet.map(c => createCardHTML(c, false)).join('');
+            
+            if(currentStep > 0) {
+                document.getElementById('analysis-text').innerText = transitionPhrases[Math.floor(Math.random() * transitionPhrases.length)];
+                setTimeout(() => {
+                    document.getElementById('analysis-text').innerText = "بص كويس 👁️ ورقتك موجودة وسط المجموعة دي؟";
+                }, 1500);
+            }
+        }
+
+        function answer(isHere) {
+            if (isHere) {
+                chosenCardId += (1 << currentStep);
+            }
+            currentStep++;
+            
+            // تأثير بصري خفيف عند الإجابة
+            const qCards = document.getElementById('question-cards');
+            qCards.style.opacity = '0';
+            setTimeout(() => {
+                showQuestion();
+                qCards.style.opacity = '1';
+            }, 300);
+        }
+
+        function startMindReading() {
+            switchScreen('thinking-screen');
+            const textEl = document.getElementById('mind-reading-text');
+            
+            // اختيار جمل عشوائية للتمثيل
+            let selectedPhrases = [];
+            let tempPhrases = [...thinkingPhrases].sort(() => 0.5 - Math.random());
+            for(let i=0; i<6; i++) selectedPhrases.push(tempPhrases[i]);
+            selectedPhrases.push("خلاص الصورة ظهرت 😈");
+
+            let i = 0;
+            textEl.innerText = selectedPhrases[i];
+            document.body.classList.add('shake');
+
+            let interval = setInterval(() => {
+                i++;
+                if (i >= selectedPhrases.length) {
+                    clearInterval(interval);
+                    document.body.classList.remove('shake');
+                    revealCard();
+                } else {
+                    textEl.innerText = selectedPhrases[i];
+                    textEl.classList.remove('shake');
+                    void textEl.offsetWidth; 
+                    textEl.classList.add('shake');
+                }
+            }, 1800);
+        }
+
+        function revealCard() {
+            switchScreen('reveal-screen');
+      const finalCard = deck[chosenCardId - 1];
+            const container = document.getElementById('final-card-container');
+            const nameEl = document.getElementById('final-card-name');
+
+            if (!finalCard) {
+                // لو اللاعب جاوب "لا" على كل الأسئلة (خدعة لم يختار ورقة)
+                container.innerHTML = `<h1 style="color:red; font-size:4rem;">🤔</h1>`;
+                nameEl.innerText = "انت بتضحك عليا ومخترتش ولا ورقة صح؟ 😂";
+                return;
+            }
+
+            // رسم الكارت النهائي بشكل واضح وفخم بالرقم والرمز
+            container.innerHTML = `
+                <div class="reveal-card ${finalCard.color}">
+                    <span class="mini-suit top">${finalCard.suit}</span>
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">
+                        <span style="font-size: 3.5rem; font-weight: 900; line-height: 1;">${finalCard.value}</span>
+                        <span style="font-size: 5rem; line-height: 1; margin-top: 5px;">${finalCard.suit}</span>
+                    </div>
+                    <span class="mini-suit bottom">${finalCard.suit}</span>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                nameEl.innerHTML = `ورقتك هي:<br> <strong style="font-size:2.5rem; color:#d4af37;">${finalCard.suit} ${finalCard.value}</strong>`;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

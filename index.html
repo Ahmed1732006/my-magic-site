@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة السحر ✨</title>
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tahoma', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+            color: white;
+            position: relative;
+        }
+
+        /* ===== TWINKLE STARS (خلفية ثابتة) ===== */
+        .twinkle-star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: twinkle var(--duration, 3s) ease-in-out infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: 0.2;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* ===== FALLING STARS (متساقطة) ===== */
+        .falling-star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: fall linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) scale(0);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(110vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* ===== FLOATING PARTICLES (جسيمات ضبابية) ===== */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(100, 181, 246, 0.6), transparent);
+            pointer-events: none;
+            z-index: 0;
+            animation: floatParticle var(--dur, 8s) ease-in-out infinite alternate;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            100% {
+                transform: translate(var(--tx, 50px), var(--ty, -50px)) scale(1.4);
+                opacity: 0.7;
+            }
+        }
+
+        /* ===== المحتوى الرئيسي ===== */
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 40px;
+            margin-bottom: 60px;
+            color: #fff;
+            text-shadow:
+                0 0 10px #9b00ff,
+                0 0 30px #00d9ff;
+            animation: show 1.5s;
+            z-index: 2;
+            position: relative;
+        }
+
+        /* ===== الكروت ===== */
+        .cards {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            width: 220px;
+            height: 260px;
+            background: linear-gradient(145deg, #140020, #050014);
+            border: 2px solid #8a2be2;
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 20px #8a2be2;
+            transition: 0.4s;
+            animation: show 2s;
+            text-decoration: none;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card:hover {
+            transform: scale(1.12) rotate(2deg);
+            box-shadow:
+                0 0 25px #ffd700,
+                0 0 50px #8a2be2;
+        }
+
+        .icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: float 2s infinite alternate;
+        }
+
+        .name {
+            font-size: 25px;
+            color: #ffd700;
+            text-shadow: 0 0 15px gold;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes float {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes show {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 28px;
+            }
+            .card {
+                width: 170px;
+                height: 210px;
+            }
+            .icon {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== BACKGROUND ELEMENTS (سيتم إنشاؤها بواسطة JS) ===== -->
+
+    <!-- ===== المحتوى ===== -->
+    <div class="container">
+        <h1>✨ اختر السحر الذي تريد تجربته ✨</h1>
+
+        <div class="cards">
+            <div class="card" onclick="openMagic(1)">
+                <div class="icon">🔮</div>
+                <div class="name">السحر رقم 1</div>
+            </div>
+
+            <div class="card" onclick="openMagic(2)">
+                <div class="icon">📖</div>
+                <div class="name">السحر رقم 2</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== فتح الملفات =====
+        function openMagic(num) {
+            if (num == 1) {
+                location.href = "1.html";
+            } else {
+                location.href = "2.html";
+            }
+        }
+
+        // ============================================================
+        //  1.  TWINKLE STARS (ثابتة)
+        // ============================================================
+        function createTwinkleStars() {
+            const count = 80;
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'twinkle-star';
+                const size = Math.random() * 2.5 + 0.5;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.setProperty('--duration', (Math.random() * 4 + 2) + 's');
+                star.style.animationDelay = (Math.random() * 5) + 's';
+                star.style.opacity = Math.random() * 0.5 + 0.2;
+                document.body.appendChild(star);
+            }
+        }
+        createTwinkleStars();
+
+        // ============================================================
+        //  2.  FALLING STARS (متساقطة)
+        // ============================================================
+        function createFallingStars() {
+            const count = 60;
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'falling-star';
+                const size = Math.random() * 3 + 1.5;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * -20 + 'vh';
+                star.style.animationDuration = (Math.random() * 4 + 2.5) + 's';
+                star.style.animationDelay = (Math.random() * 5) + 's';
+                star.style.opacity = Math.random() * 0.6 + 0.3;
+                document.body.appendChild(star);
+            }
+        }
+        createFallingStars();
+
+        // ============================================================
+        //  3.  FLOATING PARTICLES (جسيمات ضبابية)
+        // ============================================================
+        function createParticles() {
+            const count = 12;
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 60 + 20;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.top = Math.random() * 100 + 'vh';
+                p.style.setProperty('--dur', (Math.random() * 10 + 6) + 's');
+                p.style.setProperty('--tx', (Math.random() * 120 - 60) + 'px');
+                p.style.setProperty('--ty', (Math.random() * 120 - 60) + 'px');
+                p.style.animationDelay = (Math.random() * 6) + 's';
+                p.style.opacity = Math.random() * 0.15 + 0.05;
+                document.body.appendChild(p);
+            }
+        }
+        createParticles();
+
+        // ============================================================
+        //  4.  تأثير الماوس (حركة خفيفة للكروت والعنوان)
+        // ============================================================
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 6;
+            const y = (e.clientY / window.innerHeight - 0.5) * 6;
+
+            document.querySelectorAll('.card').forEach((card, i) => {
+                const offset = i === 0 ? 1 : -1;
+                card.style.transform =
+                    `translate(${x * 0.3 * offset}px, ${y * 0.3 * offset}px) scale(1)`;
+            });
+
+            const h1 = document.querySelector('h1');
+            if (h1) {
+                h1.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+            }
+        });
+
+        console.log('✨ مرحباً بك في بوابة السحر! ✨');
+    </script>
+
+</body>
+</html>

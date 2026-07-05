@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طقس قراءة الأفكار السحري</title>
+    <style>
+        :root {
+            --bg-color: #06020f;
+            --card-bg: #110924;
+            --accent-gold: #d4af37;
+            --accent-glow: #8a2be2;
+            --text-light: #f5f0ff;
+            --red-suit: #ff3b30;
+            --black-suit: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #160a2b 0%, var(--bg-color) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 15px;
+        }
+
+        /* الخلفية السحرية المتحركة */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                        radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                        radial-gradient(3px 3px at 50px 160px, #ddd, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.2;
+            animation: ambientMove 60s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes ambientMove {
+            from { background-position: 0 0; }
+            to { background-position: 200px 200px; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* الشاشات والمراحل */
+        .screen {
+            display: none;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        p.intro-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #bfaed6;
+            margin-bottom: 30px;
+        }
+
+        /* الأزرار الفخمة */
+        .btn-magic {
+            background: linear-gradient(135deg, #4b134f, #1c0626);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-magic:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
+            background: linear-gradient(135deg, #5c1861, #280a36);
+        }
+
+        /* مرحلة اللعب وتوزيع الكروت */
+        .game-status {
+            font-size: 0.95rem;
+            color: var(--accent-gold);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .instruction {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #d1c4e9;
+        }
+
+        /* شبكة الأعمدة للموبايل */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+            padding: 5px;
+        }
+
+        .pile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pile {
+            background: rgba(25, 12, 48, 0.4);
+            border: 1px dashed rgba(212, 175, 55, 0.2);
+            border-radius: 10px;
+            width: 100%;
+            min-height: 320px;
+            position: relative;
+            padding-top: 10px;
+            margin-bottom: 15px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+        }
+
+        /* تصميم الكارت الاحترافي */
+        .card {
+            width: 75px;
+            height: 110px;
+            background: var(--card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 6px;
+            position: absolute;
+            left: calc(50% - 37.5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 6px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), top 0.4s ease;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        @media(max-width: 400px) {
+            .card {
+                width: 65px;
+                height: 95px;
+                left: calc(50% - 32.5px);
+                font-size: 1rem;
+            }
+            .board { gap: 6px; }
+        }
+
+        .card.red { color: var(--red-suit); border-color: rgba(255, 59, 48, 0.3); }
+        .card.black { color: var(--black-suit); border-color: rgba(255, 255, 255, 0.2); }
+
+        .card .card-suit-center {
+            font-size: 1.8rem;
+            align-self: center;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+        }
+
+        .card .card-bottom {
+            transform: rotate(180deg);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* أزرار اختيار الأعمدة */
+        .btn-select-pile {
+            width: 100%;
+            padding: 10px 5px;
+            font-size: 0.9rem;
+            background: #1f0d3d;
+            border: 1px solid rgba(138, 43, 226, 0.6);
+            color: #e2d5f8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-select-pile:hover {
+            background: var(--accent-glow);
+            border-color: var(--accent-gold);
+            color: #fff;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .controls-footer {
+            margin-top: 10px;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #5d4587;
+            color: #bfaed6;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* شاشة الطقس والتخمين */
+        .ritual-circle {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed var(--accent-gold);
+            border-radius: 50%;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: spin 10s linear infinite;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+            position: relative;
+        }
+
+        .ritual-circle::after {
+            content: '👁️‍🗨️';
+            font-size: 2.5rem;
+            animation: counterSpin 10s linear infinite;
+        }
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes counterSpin { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+
+        .ritual-text {
+            font-size: 1.3rem;
+            min-height: 70px;
+            color: #e2d5f8;
+            padding: 0 20px;
+            font-style: italic;
+            transition: opacity 0.4s ease;
+        }
+
+        /* شاشة الكشف النهائي */
+        .reveal-card-container {
+            margin: 30px auto;
+            perspective: 1000px;
+            width: 140px;
+            height: 200px;
+        }
+
+        .final-card {
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg);
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            animation: ultimateReveal 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transform: scale(0);
+        }
+
+        .final-card .card-suit-center {
+            font-size: 3.5rem;
+        }
+
+        @keyframes ultimateReveal {
+            0% { transform: scale(0) rotateY(0deg); }
+            50% { transform: scale(1.2) rotateY(180deg); }
+            100% { transform: scale(1) rotateY(360deg); }
+        }
+
+        .final-message {
+            font-size: 1.6rem;
+            color: var(--accent-gold);
+            margin-bottom: 25px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; text-shadow: 0 0 15px var(--accent-gold); }
+            100% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <div class="container">
+        
+        <div id="screen-intro" class="screen active">
+            <h1>طقس قراءة الأفكار الرقمي</h1>
+            <p class="intro-text">
+                مرحباً بك في تجربة سحرية غامضة تتحدى المنطق.. <br><br>
+            (    صفي ذهنك تماماً.واختر و رقه من ال هتكونو موجودين قدامك ). <br><br>
+                <strong> ركز في ملامحه كويس.. متنطقوش.. ومتكتبوش في أي مكان. </strong>
+            </p>
+            <button class="btn-magic" onclick="startMagic()">جاهز؟ ابدأ السحر</button>
+        </div>
+
+        <div id="screen-game" class="screen">
+            <div id="round-indicator" class="game-status">المرحلة الأولى: تضييق الاحتمالات</div>
+            <div class="instruction"> اختر ورقتك راقب ورقتك كويس جداً.. وقولي ظهرت في أنهي عمود بس طيب اختر العمود ال في ورقتك؟</div>
+            
+            <div class="board">
+                <div class="pile-container">
+                    <div id="pile-0" class="pile"></div>
+                    <button class="btn-select-pile" onclick="selectPile(0)">ورقتي هنا ⬆️</button>
+                </div>
+                <div class="pile-container">
+                    <div id="pile-1" class="pile"></div>
+                    <button class="btn-select-pile" onclick="selectPile(1)">ورقتي هنا ⬆️</button>
+                </div>
+                <div class="pile-container">
+                    <div id="pile-2" class="pile"></div>
+                    <button class="btn-select-pile" onclick="selectPile(2)">ورقتي هنا ⬆️</button>
+                </div>
+            </div>
+
+            <div class="controls-footer">
+                <button class="btn-secondary" onclick="renderPilesWithAnimation()">🔄 إعادة التوزيع</button>
+            </div>
+        </div>
+
+        <div id="screen-ritual" class="screen">
+            <h1>جاري قراءة موجات عقلك...</h1>
+            <div class="ritual-circle"></div>
+            <div id="ritual-text" class="ritual-text">استنى كده... بدأت أحس بذبذبات غريبة في المكان...</div>
+        </div>
+
+        <div id="screen-reveal" class="screen">
+            <div class="final-message" id="final-msg">لقد عرفت اختيارك الحقيقي...</div>
+            
+            <div class="reveal-card-container">
+                <div id="final-card" class="final-card">
+                    </div>
+            </div>
+
+            <button class="btn-magic" style="margin-top: 20px;" onclick="resetGame()">العب تاني 🔄</button>
+        </div>
+
+    </div>
+
+    <script>
+        // تعريف بنية أوراق الكوتشينة بالكامل لعزل 27 ورقة عشوائية في كل دورة
+        const suits = [
+            { symbol: '♠', name: 'spades', type: 'black' },
+            { symbol: '♥', name: 'hearts', type: 'red' },
+            { symbol: '♦', name: 'diamonds', type: 'red' },
+            { symbol: '♣', name: 'clubs', type: 'black' }
+        ];
+        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+        let deck = [];
+        let currentRound = 1;
+        let pile0 = [], pile1 = [], pile2 = [];
+
+        // قائمة الجمل التوقعية باللهجة المصرية (أكثر من 30 جملة) لتوليد غموض كامل
+        const egyptianPhrases = [
+            "استنى كده... بدأت أحس بذبذبات غريبة في المكان...",
+            "الورقة دي لونها أحمر؟ ولا عيني بتخدعني؟",
+            "لأ ثواني... شكلها إسود غامق... ملامحها بتتحرك في عقلك...",
+            "مش حاسس إنها رقم زوجي... ولا فردي؟ اصبر عليا...",
+            "الرمز بتاعها بدأ يظهر ويختفي في الهالة بتاعتك...",
+            "قريبة أوي... أنا شايف طيف أحمر بيلوح...",
+            "ثانية واحدة... بلاش تتحرك ولا ترمش عشان التركيز ما يفصلش...",
+            "الورقة بتستخبى ذكية أوي وسط الكروت... بس هجيبها...",
+            "أنا بدأت أشم ريحة ملكية... هل الكارت فيه شخصية؟ شايب أو بنت؟",
+            "أو يمكن رقم صغير وهادي؟ الملامح بتتجمع أهو...",
+            "امممم... مفيش داعي للقلق، أنا بقرب من السر بسرعة...",
+            "النبض بتاعك زاد فجأة أول ما افتكرت شكل الكارت دلوقتي حالا!",
+            "يا ترى هي قلب أحمر؟ ولا بستوني إسود؟ تفكيرك متذبذب...",
+            "الرقم بيتحرك بسرعة في عقلك... ثبت عينك على الشاشة...",
+            "أيوا... بدأت تثبت ملامحها وتظهر في خيالي بكل وضوح...",
+            "الحيز بيضيق... والروح السحرية بتدور حوالين كارت معين...",
+            "أكيد مش الورقة الأولى خالص... ولا الأخيرة... هي مستخبية في النص...",
+            "شايف تفاصيل ذهبية... وضلمة بتلف حوالين الكارت المراد...",
+            "اللعبة دي مش حظ ولا هندسة... عقلك مكشوف بالكامل قدامي...",
+            "الحقيقة بتقرب أهو... خلاص على وشك الكشف...",
+            "فاضل تكة واحدة والستار يترفع عن اختيارك المخفي...",
+            "خلاص... ملامحها نورت في وسط العتمة والغموض...",
+            "جاهز للصدمة؟ الموضوع هيذهلك لدرجة مش هتقدر تفسرها...",
+            "الكارت ده مشحون بطاقة قوية جداً خارجة من تركيزك...",
+            "شايف خطوط حمرة متقاطعة... لأ قلب... لأ استنى خليني دقيق...",
+            "الوشوش والرموز بدأت تتكلم وتهمس في ودني باسم الكارت...",
+            "الموضوع غريب... عقلك منظم جداً في التفكير ومثبت الاختيار...",
+            "أنا حاسس بيها بتنادي من وسط الـ 27 ورقة بقوة...",
+            "قربت جداً... الرؤية بقت واضحة في دماغي بنسبة 90%...",
+            "مستعد تشوف سحر حقيقي بيخترق الشاشات؟",
+            "الكارت خلاص بقى في إيدي... وجاهز للظهور السينمائي الكاسح!"
+        ];
+
+        // بدء اللعبة وتوليد الكروت العشوائية
+        function startMagic() {
+            generateMysteriousDeck();
+            currentRound = 1;
+            dealCardsToPiles();
+            switchScreen('screen-game');
+            updateRoundIndicator();
+            renderPilesWithAnimation();
+        }
+
+        // إنشاء كوتشينة مكونة من 27 كارت عشوائي بالكامل لضمان عدم التكرار والملل
+        function generateMysteriousDeck() {
+            let fullDeck = [];
+            for (let s of suits) {
+                for (let v of values) {
+                    fullDeck.push({ value: v, suit: s.symbol, type: s.type });
+                }
+            }
+            // خلط الكوتشينة الكاملة (52) واختيار 27 كارت عشوائي منها
+            fullDeck.sort(() => Math.random() - 0.5);
+            deck = fullDeck.slice(0, 27);
+        }
+
+        // توزيع الكروت رياضياً على الـ 3 أعمدة (طريقة التوزيع المتتالي لنجاح الخدعة)
+        function dealCardsToPiles() {
+            pile0 = []; pile1 = []; pile2 = [];
+            for (let i = 0; i < deck.length; i++) {
+                if (i % 3 === 0) pile0.push(deck[i]);
+                else if (i % 3 === 1) pile1.push(deck[i]);
+                else pile2.push(deck[i]);
+            }
+        }
+
+        // عرض الكروت في الأعمدة مع تأثير التداخل الرأسي المناسب جداً للموبايل
+        function renderPilesWithAnimation() {
+            renderSinglePile('pile-0', pile0);
+            renderSinglePile('pile-1', pile1);
+            renderSinglePile('pile-2', pile2);
+        }
+
+        function renderSinglePile(elementId, pileCards) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            pileCards.forEach((card, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = `card ${card.type}`;
+                // حساب المسافة الرأسية للتداخل لخلق شكل انسيابي فخم ومريح للموبايل
+                cardDiv.style.top = `${index * 26}px`; 
+                cardDiv.style.transform = `scale(0)`;
+                
+                cardDiv.innerHTML = `
+                    <div>${card.value} ${card.suit}</div>
+                    <div class="card-suit-center">${card.suit}</div>
+                    <div class="card-bottom"><span>${card.value}</span><span>${card.suit}</span></div>
+                `;
+                container.appendChild(cardDiv);
+                
+                // تأثير أنيميشن ناعم لتوزيع الكروت كأنها تظهر سحرياً بالترتيب
+                setTimeout(() => {
+                    cardDiv.style.transform = `scale(1)`;
+                }, index * 40);
+            });
+        }
+
+        // معالجة اختيار اللاعب للعمود وإعادة ترتيب الكروت رياضياً
+   function selectPile(chosenPileIndex) {
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+    let p0 = [...pile0];
+    let p1 = [...pile1];
+    let p2 = [...pile2];
+            // خدعة الـ 27 ورقة الرياضية: يجب دائماً وضع العمود المختار في "المنتصف" بين العمودين الآخرين
+            if (chosenPileIndex === 0) {
+                deck = [...p1, ...p0, ...p2];
+            } else if (chosenPileIndex === 1) {
+                deck = [...p0, ...p1, ...p2];
+            } else {
+                deck = [...p0, ...p2, ...p1];
+            }
+
+            if (currentRound < 3) {
+                currentRound++;
+                updateRoundIndicator();
+                dealCardsToPiles();
+                renderPilesWithAnimation();
+            } else {
+                // بعد انتهاء الـ 3 جولات، الورقة ستكون حتماً في المركز رقم 14 (أي الاندكس 13 في المصفوفة)
+                startRitualTextDisplay();
+            }
+        }
+
+        function updateRoundIndicator() {
+            const indicator = document.getElementById('round-indicator');
+            if (currentRound === 1) indicator.innerText = "المرحلة الأولى: تضييق الاحتمالات";
+            else if (currentRound === 2) indicator.innerText = "المرحلة الثانية: الاقتراب من الورقة";
+            else if (currentRound === 3) indicator.innerText = "المرحلة الثالثة: تحديد الورقة النهائية";
+        }
+
+        // إطلاق طقوس التخمين السينمائية وعرض الكلمات عشوائياً بمؤثرات خافتة
+        function startRitualTextDisplay() {
+            switchScreen('screen-ritual');
+            let shuffledPhrases = [...egyptianPhrases].sort(() => Math.random() - 0.5);
+            let phraseIndex = 0;
+            const ritualTextEl = document.getElementById('ritual-text');
+
+            // عرض 6 جمل متتالية عشوائية لخلق جو حقيقي من الإثارة قبل الكشف
+            const interval = setInterval(() => {
+                if (phraseIndex < 6) {
+                    ritualTextEl.style.opacity = 0;
+                    setTimeout(() => {
+                        ritualTextEl.innerText = shuffledPhrases[phraseIndex];
+                        ritualTextEl.style.opacity = 1;
+                        phraseIndex++;
+                    }, 400);
+                } else {
+                    clearInterval(interval);
+                    revealFinalCard();
+                }
+            }, 1800);
+        }
+
+        // الكشف النهائي الفاخر عن الورقة المقصودة بدقة متناهية
+        function revealFinalCard() {
+            switchScreen('screen-reveal');
+            
+            // الكارت المستهدف رياضياً هو الكارت في السنتر تماماً (الاندكس رقم 13)
+            const targetCard = deck[13]; 
+            const finalCardContainer = document.getElementById('final-card');
+            
+            finalCardContainer.className = `final-card ${targetCard.type}`;
+            finalCardContainer.innerHTML = `
+                <div>${targetCard.value} ${targetCard.suit}</div>
+                <div class="card-suit-center">${targetCard.suit}</div>
+                <div class="card-bottom"><span>${targetCard.value}</span><span>${targetCard.suit}</span></div>
+            `;
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function resetGame() {
+            switchScreen('screen-intro');
+        }
+    </script>
+</body>
+</html>
